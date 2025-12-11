@@ -1,0 +1,177 @@
+/* --- 1. RESET PARA VISUAL QUADRADO E COMPACTO --- */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Arial', sans-serif;
+    border-radius: 0 !important;
+}
+
+/* Scrollbar Quadrada */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-left: 1px solid #000; }
+::-webkit-scrollbar-thumb { background: #666; border: 1px solid #000; }
+
+body { 
+    background-color: #525659; 
+    padding: 20px 0; 
+    display: flex; flex-direction: column; align-items: center; 
+}
+
+/* --- 2. TABELA MESTRE (OTIMIZADA) --- */
+.tabela-impressao {
+    width: 210mm;
+    background: white;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.tabela-impressao td { padding: 0 10mm; }
+
+/* ALTURAS REDUZIDAS PARA CABER MAIS CONTEÚDO */
+.tabela-impressao thead { height: 110px; } /* Logo + Texto compacto */
+.tabela-impressao tfoot { height: 40px; }  /* Espaço mínimo para rodapé */
+
+/* --- 3. CABEÇALHO --- */
+.cabecalho-oficial {
+    display: flex; align-items: center;
+    border-bottom: 2px solid #000;
+    padding: 5mm 0 3px 0; /* Padding reduzido */
+}
+.logo-container { width: 15%; display: flex; justify-content: center; }
+.logo-img { width: 60px; height: auto; } /* Logo levemente menor */
+.texto-cabecalho { width: 85%; text-align: center; }
+.nome-mantenedora { font-size: 12pt; font-weight: bold; text-transform: uppercase; margin-bottom: 2px; }
+.nome-escola { font-size: 9.5pt; font-weight: bold; margin-bottom: 3px; }
+.dados-legais p { font-size: 7pt; margin: 0; } /* Letra legal bem pequena */
+
+/* --- 4. RODAPÉ FIXO --- */
+.rodape-fixo {
+    position: fixed; 
+    bottom: 0; left: 0; width: 100%;
+    background: white; z-index: 1000;
+    display: none; 
+}
+.rodape-spacer { height: 40px; } 
+
+.endereco-oficial {
+    width: 210mm; margin: 0 auto;
+    border-top: 2px solid #000;
+    text-align: center;
+    padding: 5px 0 8mm 0;
+    font-size: 7.5pt; /* Endereço compacto */
+    background: white;
+    line-height: 1.2;
+}
+
+@media screen {
+    .rodape-fixo { display: block; position: relative; margin-top: -45px; }
+}
+
+/* --- 5. ENQUADRAMENTO (COMPACTO) --- */
+.quadro-principal {
+    border: 1px solid #000; 
+    margin-bottom: 8px; /* Menos espaço entre quadros */
+    background-color: #fff; page-break-inside: avoid;
+    padding: 0; 
+}
+
+.titulo-sessao {
+    background-color: #e0e0e0; font-size: 9.5pt; font-weight: bold; text-transform: uppercase;
+    text-align: center; padding: 3px; 
+    border-bottom: 1px solid #000; width: 100%;
+}
+
+.cabecalho-interno {
+    background-color: #f2f2f2; border-bottom: 1px solid #000;
+    padding: 3px 5px; margin-bottom: 5px;
+}
+.corpo-sessao { padding: 5px 8px; }
+
+h4 { font-size: 9.5pt; font-weight: bold; text-transform: uppercase; margin: 0; }
+.subtexto { font-size: 8pt; font-style: italic; color: #333; margin-top: 1px; margin-bottom: 0;}
+.titulo-documento h1 { 
+    text-align: center; font-size: 11pt; /* Título menor */
+    text-decoration: underline; margin: 10px 0; 
+}
+
+/* --- 6. CAMPOS E TEXTOS --- */
+.grid-identificacao { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.campo { display: flex; flex-direction: column; }
+.full-width { grid-column: span 4; }
+label { font-size: 8pt; font-weight: bold; margin-bottom: 1px; text-transform: uppercase; }
+
+input, textarea { 
+    border: 1px solid #666; font-size: 9.5pt; /* Fonte de preenchimento */
+    width: 100%; padding: 2px 4px; background: #fff;
+}
+input { height: 22px; } /* Input mais fino */
+.bg-gray { background: #eee; border-color: #999; }
+.box-destaque { background-color: #f9f9f9; border: 1px dashed #000 !important; padding: 5px; margin-top: 5px;}
+.grid-profissionais { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 2px; }
+
+/* --- 7. ASSINATURAS --- */
+.assinaturas-final { margin-top: 15px; page-break-inside: avoid; }
+.data-extenso { text-align: right; margin-bottom: 15px; font-weight: bold; font-size: 9.5pt; }
+.assinaturas-grid { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px; }
+.assinatura-box { width: 30%; text-align: center; }
+.img-assinatura { width: 100%; max-width: 150px; height: auto; display: block; margin: 0 auto; border-bottom: 1px solid #000; padding-bottom: 1px; }
+.linha-sign { border-top: 1px solid #000; margin-bottom: 3px; width: 100%; }
+.nome-dinamico { font-weight: bold; font-size: 9pt; display: block; min-height: 14px; text-transform: uppercase; }
+.cargo { font-size: 8pt; font-weight: bold; text-transform: uppercase; margin-top: 1px; }
+
+/* --- 8. INTERATIVIDADE / MODAL --- */
+.area-interativa { border: 1px solid #000; padding: 3px; background: #fff; display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; }
+.status { font-size: 0.7em; font-weight: bold; text-transform: uppercase;}
+.status.pendente { color: #d00; }
+.status.salvo { color: #080; }
+.btn-sistema { padding: 6px 12px; border: 1px solid #000; cursor: pointer; color: white; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }
+.btn-imprimir { background: #333; }
+.btn-checklist { background: #555; }
+.btn-salvar { background: #000; border: 1px solid #333; margin-top: 10px; width: 100%; }
+.btn-mini { background: #000; color: #fff; border: 1px solid #000; font-size: 0.6em; padding: 1px 4px; margin-left: 5px;}
+.label-azul { color: #000; text-decoration: underline; font-weight: bold; display: block; }
+.controles-topo { margin-bottom: 10px; color: white; text-align: center; }
+
+/* Espelho de Impressão (Texto Final) */
+.print-mirror { 
+    display: none; font-size: 9.5pt; text-align: justify; white-space: pre-wrap; color: #000; 
+    border: 1px solid #000; padding: 4px; margin-top: 2px; line-height: 1.2; min-height: 22px;
+}
+
+/* MODAL STRUCTURE */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; justify-content: center; align-items: center; }
+.modal-box { background: white; width: 90%; max-width: 900px; height: 90%; padding: 15px; border: 2px solid #000; display: flex; flex-direction: column; }
+.modal-header { display: flex; justify-content: space-between; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 5px; flex-shrink: 0; }
+.modal-body { display: flex; flex: 1; gap: 10px; overflow: hidden; margin-top: 5px; }
+.coluna-checklist { width: 40%; height: 100%; overflow-y: auto; padding-right: 5px; border-right: 1px solid #000; background-color: #fafafa; }
+.coluna-textos { width: 60%; display: flex; flex-direction: column; padding-left: 5px; overflow-y: auto; }
+.coluna-textos textarea { flex: 1; margin-bottom: 5px; min-height: 80px; }
+.grupo-checklist h5 { background: #000; color: #fff; padding: 4px; position: sticky; top: 0; font-size: 0.9em; }
+.item-check { margin: 3px 0; border-bottom: 1px dotted #ccc; padding: 2px; display: flex; align-items: flex-start; font-size: 0.9em; }
+
+/* --- 9. IMPRESSÃO (CRÍTICO) --- */
+@media print {
+    body { background: none; padding: 0; margin: 0; }
+    .no-print { display: none !important; }
+    .tabela-impressao { width: 100%; box-shadow: none; margin-bottom: 0; border: none; }
+    thead { display: table-header-group; }
+    tfoot { display: table-footer-group; }
+    
+    .rodape-fixo { display: block !important; position: fixed; bottom: 0; left: 0; width: 100%; background: white; }
+    .endereco-oficial { width: 100%; padding-bottom: 5mm; border: none; border-top: 2px solid #000; }
+    
+    textarea { display: none !important; }
+    .print-mirror { display: block !important; }
+    
+    .quadro-principal, .titulo-sessao, .cabecalho-oficial, .linha-sign, .print-mirror, input {
+        border-color: #000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    input { border: 1px solid #000; } 
+    
+    /* MARGENS OTIMIZADAS PARA 3 LAUDAS */
+    @page { margin: 10mm 12mm 10mm 12mm; size: A4; } 
+}
