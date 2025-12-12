@@ -17,7 +17,8 @@
         <div class="busca-container">
             <input type="text" id="buscaAluno" placeholder="🔍 Buscar aluno..." onkeyup="filtrarLista()">
         </div>
-        <div id="lista-alunos" class="lista-alunos-salvos"></div>
+        <div id="lista-alunos" class="lista-alunos-salvos">
+            </div>
     </div>
 
     <div class="controles-topo no-print">
@@ -78,6 +79,14 @@
                                     
                                     <div class="campo full-width"><label>Filiação:</label><input type="text" id="filiacao"></div>
                                     <div class="campo"><label>Data Avaliação:</label><input type="date" id="dataAvaliacao"></div>
+
+                                    <div class="campo full-width no-print box-destaque">
+                                        <label class="label-azul"><i class="fas fa-user-edit"></i> Dados Assistente Social:</label>
+                                        <div class="grid-profissionais">
+                                            <input type="text" id="nomeSoc" placeholder="Nome A. Social">
+                                            <input type="text" id="regSoc" placeholder="CRESS">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </section>
@@ -135,33 +144,13 @@
 
                         <div class="assinaturas-final">
                             <p class="data-extenso">Londrina, <span id="dataAtual"></span>.</p>
-                            
                             <div class="assinaturas-grid">
-                                
+                                <div class="assinatura-box"><img src="asspedagoda.jpg" alt="Pedagoga" class="img-assinatura"></div>
+                                <div class="assinatura-box"><img src="asspsicologa.jpg" alt="Psicóloga" class="img-assinatura"></div>
                                 <div class="assinatura-box">
-                                    <select id="sel_pedagoga" class="select-assinatura no-print" onchange="mudarAssinatura('pedagoga')"></select>
-                                    <div id="container_img_pedagoga">
-                                        <img id="img_pedagoga" src="" alt="Assinatura" class="img-assinatura">
-                                    </div>
-                                    <p id="cargo_pedagoga" class="cargo">Pedagoga</p>
+                                    <div class="linha-sign"></div>
+                                    <span id="assSoc" class="nome-dinamico"></span><p class="cargo">Assistente Social</p>
                                 </div>
-
-                                <div class="assinatura-box">
-                                    <select id="sel_psicologa" class="select-assinatura no-print" onchange="mudarAssinatura('psicologa')"></select>
-                                    <div id="container_img_psicologa">
-                                        <img id="img_psicologa" src="" alt="Assinatura" class="img-assinatura">
-                                    </div>
-                                    <p id="cargo_psicologa" class="cargo">Psicóloga</p>
-                                </div>
-
-                                <div class="assinatura-box">
-                                    <select id="sel_social" class="select-assinatura no-print" onchange="mudarAssinatura('social')"></select>
-                                    <div id="container_img_social">
-                                        <img id="img_social" src="" alt="Assinatura" class="img-assinatura">
-                                    </div>
-                                    <p id="cargo_social" class="cargo">Assistente Social</p>
-                                </div>
-
                             </div>
                         </div>
 
