@@ -170,7 +170,6 @@ function carregarRelatorio(id) {
     atualizarStatusVisual('clinica');
     atualizarStatusVisual('social');
     calcularIdade();
-    atualizarAssinaturas();
     
     toggleSidebar(); // Fecha menu
 }
@@ -230,8 +229,6 @@ function configurarInputs() {
 
     // Eventos
     document.getElementById('dataNascimento').addEventListener('change', calcularIdade);
-    document.getElementById('nomeSoc').addEventListener('input', atualizarAssinaturas);
-    document.getElementById('regSoc').addEventListener('input', atualizarAssinaturas);
 }
 
 function ajustarAltura(el) {
@@ -247,13 +244,6 @@ function calcularIdade() {
         if(hoje < new Date(hoje.getFullYear(), n.getMonth(), n.getDate())) idade--;
         document.getElementById('idade').value = idade + " anos";
     }
-}
-
-function atualizarAssinaturas() {
-    const sNome = document.getElementById('nomeSoc').value; 
-    const sReg = document.getElementById('regSoc').value;
-    const elAss = document.getElementById('assSoc');
-    if(elAss) elAss.innerText = sNome ? `${sNome} ${sReg ? '- CRESS ' + sReg : ''}` : '';
 }
 
 function atualizarStatusVisual(tipo) {
