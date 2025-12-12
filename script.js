@@ -38,25 +38,6 @@ const CHECKLIST_DB = {
     }
 };
 
-/* === BANCO DE DADOS DE ASSINATURAS (EDITÁVEL) === */
-/* Você pode adicionar mais nomes aqui */
-const DB_ASSINATURAS = {
-    pedagoga: [
-        { nome: "Jhenifer C. André", arquivo: "asspedagoda.jpg", cargo: "Pedagoga" },
-        { nome: "Isabella F. Sanches", arquivo: "asspedagoda2.jpeg", cargo: "Pedagoga" }, // Exemplo
-        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "Pedagoga" }
-    ],
-    psicologa: [
-        { nome: "Jaqueline G. Malaquim", arquivo: "asspsicologa.jpg", cargo: "Psicóloga" },
-        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "Psicóloga" }
-    ],
-    social: [
-        { nome: "Andréia", arquivo: "asssocial2.png", cargo: "Assistente Social" },
-        { nome: "Outra Assistente", arquivo: "asssocial1.jpg", cargo: "Assistente Social" }, // Exemplo
-        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "Assistente Social" }
-    ]
-};
-
 /* === VARIÁVEIS GLOBAIS === */
 let dadosRelatorio = { pedagogica: { texto: '', extra: '' }, clinica: { texto: '', extra: '' }, social: { texto: '', extra: '' } };
 let bancoRelatorios = [];
@@ -67,9 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarInputs();
     carregarBancoDeDados();
     
-    // Inicializa os selects de assinaturas
-    inicializarAssinaturas();
-
     // Se não tiver ID carregado, limpa para garantir estado novo
     if(!document.getElementById('reportId').value) {
         novoRelatorio(false); 
@@ -80,42 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('dataAtual').innerText = hoje.toLocaleDateString('pt-BR', {day:'numeric', month:'long', year:'numeric'});
 });
 
-/* === LÓGICA DE ASSINATURAS (NOVA) === */
-function inicializarAssinaturas() {
-    ['pedagoga', 'psicologa', 'social'].forEach(tipo => {
-        const select = document.getElementById(`sel_${tipo}`);
-        const lista = DB_ASSINATURAS[tipo];
-        
-        select.innerHTML = "";
-        lista.forEach((prof, index) => {
-            const option = document.createElement('option');
-            option.value = index;
-            option.text = prof.nome;
-            select.appendChild(option);
-        });
-
-        // Carrega a primeira opção por padrão e dispara a mudança
-        mudarAssinatura(tipo);
-    });
-}
-
-function mudarAssinatura(tipo) {
-    const select = document.getElementById(`sel_${tipo}`);
-    const img = document.getElementById(`img_${tipo}`);
-    const cargo = document.getElementById(`cargo_${tipo}`);
-    const dados = DB_ASSINATURAS[tipo][select.value];
-
-    if (dados.arquivo) {
-        img.src = dados.arquivo;
-        img.style.display = 'block';
-    } else {
-        img.style.display = 'none'; // Esconde se for "Sem Assinatura"
-    }
-    
-    cargo.innerText = dados.cargo;
-}
-
-/* === SISTEMA DE BANCO DE DADOS === */
+/* === SISTEMA DE BANCO DE DADOS (LOCALSTORAGE) === */
 
 function carregarBancoDeDados() {
     const json = localStorage.getItem('db_escola_manain_v2');
@@ -136,30 +79,27 @@ function salvarNoBanco() {
 
     const idAtual = document.getElementById('reportId').value;
     
-    // Coleta dados dos inputs normais
+    // Coleta dados dos inputs
     const inputsValores = {};
     document.querySelectorAll('input, textarea').forEach(el => {
         if(el.id && el.id !== 'buscaAluno') inputsValores[el.id] = el.value;
     });
 
-    // **IMPORTANTE**: Salva também qual assinatura foi selecionada
-    inputsValores['sel_pedagoga'] = document.getElementById('sel_pedagoga').value;
-    inputsValores['sel_psicologa'] = document.getElementById('sel_psicologa').value;
-    inputsValores['sel_social'] = document.getElementById('sel_social').value;
-
     const relatorioObjeto = {
-        id: idAtual || Date.now().toString(),
+        id: idAtual || Date.now().toString(), // Se não tiver ID, cria um timestamp
         nome: nome,
         dataSalvo: new Date().toLocaleString('pt-BR'),
-        dadosRelatorio: dadosRelatorio,
-        inputs: inputsValores
+        dadosRelatorio: dadosRelatorio, // Estrutura dos checklists
+        inputs: inputsValores // Campos de texto
     };
 
     if(idAtual) {
+        // Atualiza registro existente
         const index = bancoRelatorios.findIndex(r => r.id === idAtual);
         if(index !== -1) bancoRelatorios[index] = relatorioObjeto;
         else bancoRelatorios.push(relatorioObjeto);
     } else {
+        // Novo registro
         bancoRelatorios.push(relatorioObjeto);
         document.getElementById('reportId').value = relatorioObjeto.id;
     }
@@ -167,10 +107,11 @@ function salvarNoBanco() {
     localStorage.setItem('db_escola_manain_v2', JSON.stringify(bancoRelatorios));
     atualizarListaSidebar();
     
+    // Efeito visual no botão
     const btn = document.getElementById('btnSalvar');
     const htmlOrig = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-check"></i> SALVO!';
-    btn.classList.add('btn-verde'); 
+    btn.classList.add('btn-verde'); // Garante cor
     setTimeout(() => { btn.innerHTML = htmlOrig; }, 2000);
 }
 
@@ -178,6 +119,8 @@ function atualizarListaSidebar() {
     const lista = document.getElementById('lista-alunos');
     lista.innerHTML = "";
     const termo = document.getElementById('buscaAluno').value.toLowerCase();
+
+    // Ordena: mais recente primeiro
     const ordenado = [...bancoRelatorios].sort((a,b) => b.id - a.id);
 
     ordenado.forEach(rel => {
@@ -189,6 +132,7 @@ function atualizarListaSidebar() {
                 <span><i class="far fa-clock"></i> ${rel.dataSalvo}</span>
                 <button class="btn-apagar-item" title="Excluir" onclick="deletarRelatorio('${rel.id}', event)"><i class="fas fa-trash"></i></button>
             `;
+            // Clique no card carrega, clique no lixo deleta
             div.onclick = (e) => {
                 if(!e.target.closest('.btn-apagar-item')) carregarRelatorio(rel.id);
             };
@@ -203,6 +147,7 @@ function carregarRelatorio(id) {
 
     if(!confirm(`Deseja abrir o relatório de "${rel.nome}"? \nDados não salvos na tela atual serão perdidos.`)) return;
 
+    // 1. Preenche Inputs
     if(rel.inputs) {
         for (const [key, valor] of Object.entries(rel.inputs)) {
             const el = document.getElementById(key);
@@ -212,30 +157,32 @@ function carregarRelatorio(id) {
                     el.mirrorDiv.innerText = valor;
                     ajustarAltura(el);
                 }
-                // Se for um select de assinatura, dispara o evento change para carregar a foto
-                if(key.startsWith('sel_')) {
-                    el.dispatchEvent(new Event('change'));
-                }
             }
         }
     }
 
+    // 2. Preenche Variáveis Globais
     if(rel.dadosRelatorio) dadosRelatorio = rel.dadosRelatorio;
 
+    // 3. Atualiza Interface
     document.getElementById('reportId').value = rel.id;
     atualizarStatusVisual('pedagogica');
     atualizarStatusVisual('clinica');
     atualizarStatusVisual('social');
     calcularIdade();
-    toggleSidebar();
+    atualizarAssinaturas();
+    
+    toggleSidebar(); // Fecha menu
 }
 
 function deletarRelatorio(id, event) {
-    event.stopPropagation();
+    event.stopPropagation(); // Impede que o clique no lixo abra o relatório
     if(confirm("ATENÇÃO: Deseja EXCLUIR PERMANENTEMENTE este relatório?")) {
         bancoRelatorios = bancoRelatorios.filter(r => r.id !== id);
         localStorage.setItem('db_escola_manain_v2', JSON.stringify(bancoRelatorios));
         atualizarListaSidebar();
+        
+        // Se apagou o que estava aberto, limpa a tela
         if(document.getElementById('reportId').value === id) novoRelatorio(false);
     }
 }
@@ -243,31 +190,33 @@ function deletarRelatorio(id, event) {
 function novoRelatorio(perguntar = true) {
     if(perguntar && !confirm("Deseja limpar a tela para iniciar um NOVO aluno?")) return;
 
+    // Limpa inputs (exceto fixos)
     document.querySelectorAll('input, textarea').forEach(el => {
         if(['nre','municipio','escola','buscaAluno'].includes(el.id)) return;
         el.value = "";
         if(el.mirrorDiv) el.mirrorDiv.innerText = "";
     });
     
-    // Reseta assinaturas para o padrão (índice 0)
-    ['pedagoga', 'psicologa', 'social'].forEach(tipo => {
-        const sel = document.getElementById(`sel_${tipo}`);
-        if(sel) { sel.value = 0; sel.dispatchEvent(new Event('change')); }
-    });
-
+    // Reseta globais
     dadosRelatorio = { pedagogica: { texto: '', extra: '' }, clinica: { texto: '', extra: '' }, social: { texto: '', extra: '' } };
     
     atualizarStatusVisual('pedagogica');
     atualizarStatusVisual('clinica');
     atualizarStatusVisual('social');
     
-    document.getElementById('reportId').value = "";
+    document.getElementById('reportId').value = ""; // Sem ID = Novo
 }
 
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('aberto'); }
+/* === LÓGICA DE INTERFACE === */
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('aberto');
+}
+
 function filtrarLista() { atualizarListaSidebar(); }
 
 function configurarInputs() {
+    // Textareas com auto-crescimento
     document.querySelectorAll('textarea').forEach(tx => {
         const mirror = document.createElement('div');
         mirror.className = 'print-mirror';
@@ -278,7 +227,11 @@ function configurarInputs() {
             ajustarAltura(tx);
         });
     });
+
+    // Eventos
     document.getElementById('dataNascimento').addEventListener('change', calcularIdade);
+    document.getElementById('nomeSoc').addEventListener('input', atualizarAssinaturas);
+    document.getElementById('regSoc').addEventListener('input', atualizarAssinaturas);
 }
 
 function ajustarAltura(el) {
@@ -296,6 +249,13 @@ function calcularIdade() {
     }
 }
 
+function atualizarAssinaturas() {
+    const sNome = document.getElementById('nomeSoc').value; 
+    const sReg = document.getElementById('regSoc').value;
+    const elAss = document.getElementById('assSoc');
+    if(elAss) elAss.innerText = sNome ? `${sNome} ${sReg ? '- CRESS ' + sReg : ''}` : '';
+}
+
 function atualizarStatusVisual(tipo) {
     const st = document.getElementById(`status-${tipo}`);
     if(dadosRelatorio[tipo].texto && dadosRelatorio[tipo].texto.trim() !== "") { 
@@ -307,13 +267,15 @@ function atualizarStatusVisual(tipo) {
     }
 }
 
-/* === MODAL === */
+/* === MODAL E CHECKLIST === */
 
 function abrirModal(tipo) {
     modalAtual = tipo;
     const container = document.getElementById('container-checklist');
     const labelExtra = document.getElementById('labelExtra');
+    
     labelExtra.innerText = tipo === 'pedagogica' ? "Indicações (Automático):" : "Encaminhamentos (Automático):";
+    
     document.getElementById('modalTexto').value = dadosRelatorio[tipo].texto;
     document.getElementById('modalExtra').value = dadosRelatorio[tipo].extra;
     document.getElementById('modalTitulo').innerText = "Checklist: " + tipo.charAt(0).toUpperCase() + tipo.slice(1);
@@ -350,14 +312,17 @@ function procCheck(chk, txt, ext) {
 function salvarModal() {
     dadosRelatorio[modalAtual].texto = document.getElementById('modalTexto').value;
     dadosRelatorio[modalAtual].extra = document.getElementById('modalExtra').value;
+    
     const inputOculto = document.getElementById(`texto-${modalAtual}`);
     if(inputOculto) {
         inputOculto.value = dadosRelatorio[modalAtual].texto;
+        // Atualiza o espelho de impressão também
         if(inputOculto.mirrorDiv) {
             inputOculto.mirrorDiv.innerText = dadosRelatorio[modalAtual].texto;
             ajustarAltura(inputOculto);
         }
     }
+
     atualizarStatusVisual(modalAtual);
     atualizarFinais();
     fecharModal();
@@ -366,14 +331,18 @@ function salvarModal() {
 function fecharModal() { document.getElementById('modalOverlay').style.display = 'none'; }
 
 function atualizarFinais() {
+    // 1. Indicações Pedagógicas
     const ind = document.getElementById('final-indicacoes');
     if(dadosRelatorio.pedagogica.extra && (!ind.value || ind.value === dadosRelatorio.pedagogica.extra)) {
         ind.value = dadosRelatorio.pedagogica.extra; 
         if(ind.mirrorDiv) ind.mirrorDiv.innerText = ind.value;
     }
+
+    // 2. Encaminhamentos (Junta Saúde + Social)
     let enc = "";
     if(dadosRelatorio.clinica.extra) enc += "SAÚDE:\n" + dadosRelatorio.clinica.extra + "\n";
     if(dadosRelatorio.social.extra) enc += "SOCIAL:\n" + dadosRelatorio.social.extra;
+    
     const finEnc = document.getElementById('final-encaminhamentos');
     if(enc && finEnc.value.trim() === "") {
         finEnc.value = enc.trim();
@@ -385,6 +354,7 @@ function gerarConclusaoAutomatica() {
     const nome = document.getElementById('nomeEstudante').value || "O estudante";
     const p = dadosRelatorio.pedagogica.texto;
     const conc = document.getElementById('final-conclusao');
+    
     if(!conc.value || confirm("O campo de conclusão já tem texto. Deseja sobrescrever?")) {
         conc.value = `CONCLUSÃO DIAGNÓSTICA:\n\nConsiderando o processo avaliativo, conclui-se que ${nome} apresenta necessidades educacionais específicas.\n\nNo aspecto Pedagógico: ${p.replace(/\n/g, ". ")}.`;
         if(conc.mirrorDiv) conc.mirrorDiv.innerText = conc.value;
