@@ -41,17 +41,17 @@ const CHECKLIST_DB = {
 /* === BANCO DE DADOS DE ASSINATURAS (EDITÁVEL) === */
 const DB_ASSINATURAS = {
     pedagoga: [
-        { nome: "Jhenifer C. André", arquivo: "asspedagoda.jpg", cargo: "Pedagoga" },
-        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "Pedagoga" }
+        { nome: "Jhenifer C. André", arquivo: "asspedagoda.jpg", cargo: "" },
+        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "" }
     ],
     psicologa: [
-        { nome: "Jaqueline G. Malaquim", arquivo: "asspsicologa.jpg", cargo: "Psicóloga" },
-        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "Psicóloga" }
+        { nome: "Jaqueline G. Malaquim", arquivo: "asspsicologa.jpg", cargo: "" },
+        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "" }
     ],
     /* AQUI ESTÁ A CONFIGURAÇÃO DA ASSISTENTE SOCIAL */
     social: [
-        { nome: "Assistente Social Padrão", arquivo: "asssocial.jpg", cargo: "Assistente Social" },
-        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "Assistente Social" }
+        { nome: "Assistente Social Padrão", arquivo: "asssocial.jpg", cargo: "" },
+        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "" }
     ]
 };
 
