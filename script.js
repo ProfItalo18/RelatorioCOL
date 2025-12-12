@@ -51,7 +51,7 @@ const DB_ASSINATURAS = {
     ],
     /* AQUI ESTÁ A CONFIGURAÇÃO DA ASSISTENTE SOCIAL */
     social: [
-        { nome: "Assistente Social Padrão", arquivo: "asssocial.jpg", cargo: "" },
+        { nome: "Andréia C. Santos", arquivo: "asssocial.jpg", cargo: "" },
         { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "" }
     ]
 };
