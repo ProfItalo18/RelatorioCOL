@@ -42,6 +42,7 @@ const CHECKLIST_DB = {
 const DB_ASSINATURAS = {
     pedagoga: [
         { nome: "Jhenifer C. André", arquivo: "asspedagoda.jpg", cargo: "" },
+        { nome: "Isabella F. Sanches", arquivo: "asspedagoda2.jpeg", cargo: "" },
         { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "" }
     ],
     psicologa: [
