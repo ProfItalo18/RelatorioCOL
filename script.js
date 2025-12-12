@@ -39,19 +39,21 @@ const CHECKLIST_DB = {
 };
 
 /* === BANCO DE DADOS DE ASSINATURAS (EDITÁVEL) === */
-// Edite aqui os nomes e arquivos conforme necessário
+/* Você pode adicionar mais nomes aqui */
 const DB_ASSINATURAS = {
     pedagoga: [
         { nome: "Jhenifer C. André", arquivo: "asspedagoda.jpg", cargo: "Pedagoga" },
-        { nome: "--- Em Branco ---", arquivo: "", cargo: "Pedagoga" }
+        { nome: "Isabella F. Sanches", arquivo: "asspedagoda2.jpeg", cargo: "Pedagoga" }, // Exemplo
+        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "Pedagoga" }
     ],
     psicologa: [
         { nome: "Jaqueline G. Malaquim", arquivo: "asspsicologa.jpg", cargo: "Psicóloga" },
-        { nome: "--- Em Branco ---", arquivo: "", cargo: "Psicóloga" }
+        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "Psicóloga" }
     ],
     social: [
-        { nome: "Assistente Social (Padrão)", arquivo: "asssocial.jpg", cargo: "Assistente Social" },
-        { nome: "--- Em Branco ---", arquivo: "", cargo: "Assistente Social" }
+        { nome: "Andréia", arquivo: "asssocial2.png", cargo: "Assistente Social" },
+        { nome: "Outra Assistente", arquivo: "asssocial1.jpg", cargo: "Assistente Social" }, // Exemplo
+        { nome: "--- Sem Assinatura ---", arquivo: "", cargo: "Assistente Social" }
     ]
 };
 
@@ -64,8 +66,10 @@ let modalAtual = '';
 document.addEventListener('DOMContentLoaded', () => {
     configurarInputs();
     carregarBancoDeDados();
-    inicializarAssinaturas(); // Preenche os selects
     
+    // Inicializa os selects de assinaturas
+    inicializarAssinaturas();
+
     // Se não tiver ID carregado, limpa para garantir estado novo
     if(!document.getElementById('reportId').value) {
         novoRelatorio(false); 
@@ -76,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('dataAtual').innerText = hoje.toLocaleDateString('pt-BR', {day:'numeric', month:'long', year:'numeric'});
 });
 
-/* === LÓGICA DE ASSINATURAS === */
+/* === LÓGICA DE ASSINATURAS (NOVA) === */
 function inicializarAssinaturas() {
     ['pedagoga', 'psicologa', 'social'].forEach(tipo => {
         const select = document.getElementById(`sel_${tipo}`);
@@ -89,6 +93,8 @@ function inicializarAssinaturas() {
             option.text = prof.nome;
             select.appendChild(option);
         });
+
+        // Carrega a primeira opção por padrão e dispara a mudança
         mudarAssinatura(tipo);
     });
 }
@@ -103,12 +109,14 @@ function mudarAssinatura(tipo) {
         img.src = dados.arquivo;
         img.style.display = 'block';
     } else {
-        img.style.display = 'none';
+        img.style.display = 'none'; // Esconde se for "Sem Assinatura"
     }
+    
     cargo.innerText = dados.cargo;
 }
 
-/* === SISTEMA DE BANCO DE DADOS (LOCALSTORAGE) === */
+/* === SISTEMA DE BANCO DE DADOS === */
+
 function carregarBancoDeDados() {
     const json = localStorage.getItem('db_escola_manain_v2');
     if(json) {
@@ -128,12 +136,13 @@ function salvarNoBanco() {
 
     const idAtual = document.getElementById('reportId').value;
     
+    // Coleta dados dos inputs normais
     const inputsValores = {};
     document.querySelectorAll('input, textarea').forEach(el => {
         if(el.id && el.id !== 'buscaAluno') inputsValores[el.id] = el.value;
     });
-    
-    // Salva a seleção das assinaturas
+
+    // **IMPORTANTE**: Salva também qual assinatura foi selecionada
     inputsValores['sel_pedagoga'] = document.getElementById('sel_pedagoga').value;
     inputsValores['sel_psicologa'] = document.getElementById('sel_psicologa').value;
     inputsValores['sel_social'] = document.getElementById('sel_social').value;
@@ -161,7 +170,7 @@ function salvarNoBanco() {
     const btn = document.getElementById('btnSalvar');
     const htmlOrig = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-check"></i> SALVO!';
-    btn.classList.add('btn-verde');
+    btn.classList.add('btn-verde'); 
     setTimeout(() => { btn.innerHTML = htmlOrig; }, 2000);
 }
 
@@ -203,7 +212,7 @@ function carregarRelatorio(id) {
                     el.mirrorDiv.innerText = valor;
                     ajustarAltura(el);
                 }
-                // Se for assinatura, força o evento change
+                // Se for um select de assinatura, dispara o evento change para carregar a foto
                 if(key.startsWith('sel_')) {
                     el.dispatchEvent(new Event('change'));
                 }
@@ -240,7 +249,7 @@ function novoRelatorio(perguntar = true) {
         if(el.mirrorDiv) el.mirrorDiv.innerText = "";
     });
     
-    // Reseta selects (índice 0)
+    // Reseta assinaturas para o padrão (índice 0)
     ['pedagoga', 'psicologa', 'social'].forEach(tipo => {
         const sel = document.getElementById(`sel_${tipo}`);
         if(sel) { sel.value = 0; sel.dispatchEvent(new Event('change')); }
@@ -255,7 +264,6 @@ function novoRelatorio(perguntar = true) {
     document.getElementById('reportId').value = "";
 }
 
-/* === INTERFACE E UTILITÁRIOS === */
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('aberto'); }
 function filtrarLista() { atualizarListaSidebar(); }
 
@@ -300,6 +308,7 @@ function atualizarStatusVisual(tipo) {
 }
 
 /* === MODAL === */
+
 function abrirModal(tipo) {
     modalAtual = tipo;
     const container = document.getElementById('container-checklist');
@@ -308,8 +317,10 @@ function abrirModal(tipo) {
     document.getElementById('modalTexto').value = dadosRelatorio[tipo].texto;
     document.getElementById('modalExtra').value = dadosRelatorio[tipo].extra;
     document.getElementById('modalTitulo').innerText = "Checklist: " + tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
     container.innerHTML = "";
     const dados = CHECKLIST_DB[tipo];
+    
     if(dados) {
         for(const [cat, itens] of Object.entries(dados)) {
             let html = `<div class="grupo-checklist"><h5>${cat}</h5>`;
@@ -326,6 +337,7 @@ function abrirModal(tipo) {
 function procCheck(chk, txt, ext) {
     const t = document.getElementById('modalTexto'); 
     const e = document.getElementById('modalExtra');
+    
     if(chk.checked) {
         if(!t.value.includes(txt)) t.value += (t.value ? "\n" : "") + txt;
         if(ext && !e.value.includes(ext)) e.value += (e.value ? "\n- " : "- ") + ext;

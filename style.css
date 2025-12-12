@@ -149,11 +149,11 @@ input { height: 22px; }
 .btn-fechar { font-size: 1rem; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
 .btn-fechar:hover, .modal-footer .btn-sistema:hover { background-color: #444 !important; }
 
-/* --- IMPRESSÃO --- */
+/* --- IMPRESSÃO (CRÍTICO) --- */
 @media print {
     body { background: none; padding: 0; margin: 0; }
     .no-print { display: none !important; }
-    .select-assinatura { display: none !important; } /* Esconde o select */
+    .select-assinatura { display: none !important; } /* ESCONDE O MENU */
     .sidebar { display: none !important; }
     .tabela-impressao { width: 100%; box-shadow: none; margin: 0; border: none; }
     thead { display: table-header-group; }
